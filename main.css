@@ -1,0 +1,38 @@
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: center;
+}
+
+td,
+th {
+  border: 1px solid black;
+  padding: 10px;
+}
+
+ul {
+  margin: 0;
+}
+li {
+  list-style: none;
+}
+
+.container {
+  display: flex;
+}
+
+.block {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+}
+
+.transparent {
+  display: none;
+}
+
+.close {
+  display: none;
+}
