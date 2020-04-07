@@ -1,76 +1,3 @@
-const employeers = [
-  {
-    id: 0,
-    name: "YarikHead",
-    dept_unit_id: 0,
-    tel: "123-123-3",
-    salary: 3000
-  },
-  {
-    id: 1,
-    name: "MashaLead",
-    dept_unit_id: 1,
-    tel: "123-123-3",
-    salary: 2000
-  },
-  {
-    id: 2,
-    name: "SashaLead",
-    dept_unit_id: 1,
-    tel: "123-123-3",
-    salary: 2200
-  },
-  {
-    id: 3,
-    name: "MirraDev",
-    dept_unit_id: 2,
-    tel: "123-123-3",
-    salary: 1200
-  },
-  {
-    id: 4,
-    name: "IraDev",
-    dept_unit_id: 2,
-    tel: "123-123-3",
-    salary: 1000
-  },
-  {
-    id: 5,
-    name: "DanikHead3",
-    dept_unit_id: 3,
-    tel: "123-123-33",
-    salary: 3000
-  },
-  {
-    id: 7,
-    name: "KoliaLead",
-    dept_unit_id: 4,
-    tel: "123-123-3",
-    salary: 2000
-  },
-  {
-    id: 6,
-    name: "OliaLead3",
-    dept_unit_id: 4,
-    tel: "123-123-3",
-    salary: 2200
-  },
-  {
-    id: 9,
-    name: "SienaTest",
-    dept_unit_id: 5,
-    tel: "123-123-3",
-    salary: 1000
-  },
-  {
-    id: 8,
-    name: "LenaTest",
-    dept_unit_id: 2,
-    tel: "123-123-3",
-    salary: 1200
-  }
-];
-
 let developer = {
   name: "Developers",
   id: 2,
@@ -84,7 +11,8 @@ let devLead = {
 let devDeptHead = {
   name: "Development Management",
   id: 0,
-  dept_units: [devLead]
+  dept_units: [devLead],
+  first: null
 };
 let qaTester = {
   name: "Testers",
@@ -99,11 +27,12 @@ let qaLead = {
 let qaDeptHead = {
   name: "Quality Assurance Management",
   id: 3,
-  dept_units: [qaLead]
+  dept_units: [qaLead],
+  first: null
 };
 
 let base = [devDeptHead, devLead, developer, qaDeptHead, qaLead, qaTester];
-let tree = base.filter(item => item.name.includes("Management"));
+let tree = base.filter((item) => item.first === null);
 
 let container = document.getElementsByClassName("container")[0];
 let htmlTreeParent = document.getElementsByClassName("html_tree")[0];
@@ -114,73 +43,68 @@ function traverseTree(elements, parentEl) {
   if (!elements) {
     return;
   }
-  elements.forEach(function(el) {
+  elements.forEach(function (el) {
     let liEl = document.createElement("li");
-    let spanDown = document.createElement("span");
-    let spanRight = document.createElement("span");
     let spanText = document.createElement("span");
+    let iEl = "<i class='fa fa-chevron-down'></i>";
 
     parentEl.appendChild(liEl);
-    spanText.innerText = el.name;
-    spanDown.innerText = "▽";
-    spanRight.innerText = "▷";
-
-    liEl.appendChild(spanDown);
-    liEl.appendChild(spanRight);
+    spanText.setAttribute("data-dept-id", el.id);
     liEl.appendChild(spanText);
 
-    spanDown.classList.add("transparent");
+    if (el.dept_units.length && el.dept_units) {
+      spanText.innerHTML = iEl + el.name;
+    } else {
+      spanText.innerText = el.name;
+    }
 
     if (el.dept_units.length !== 0) {
       let ulEl = document.createElement("ul");
       liEl.appendChild(ulEl);
-      ulEl.classList.add("close");
       traverseTree(el.dept_units, ulEl);
     }
   });
 }
 
-const clickHandler = event => {
-  const list = [...event.target.parentElement.children].find(
-    el => el.tagName === "UL"
-  );
-  if (list) {
-    list.classList.contains("close")
-      ? list.classList.remove("close")
-      : list.classList.add("close");
+let selectedItem = null;
+
+const clickHandler = (event) => {
+  if (event.target.tagName === "SPAN") {
+    if (selectedItem) {
+      selectedItem.classList.remove("choose");
+    }
+
+    selectedItem = event.target;
+    selectedItem.classList.add("choose");
   }
 };
 
-const clickDown = event => {
-  const down = [...event.target.parentElement.children].find(
-    el => el.tagName === "SPAN"
-  );
+const clickDown = (event) => {
+  if (event.target.tagName === "I") {
+    let liEl = event.target.parentElement.parentElement;
 
-  const right = [...event.target.parentElement.children].filter(
-    el => el.tagName
-  );
+    if (event.target.classList.contains("collapsed")) {
+      event.target.classList.add("fa-chevron-down");
+      event.target.classList.remove("fa-chevron-right");
+    } else {
+      event.target.classList.add("fa-chevron-right");
+      event.target.classList.remove("fa-chevron-down");
+    }
 
-  const children = [...event.target.parentElement.children].filter(
-    el => el.tagName === "UL"
-  );
-
-  down.classList.contains("transparent")
-    ? down.classList.remove("transparent")
-    : down.classList.add("transparent");
-
-  right[1].classList.contains("transparent")
-    ? right[1].classList.remove("transparent")
-    : right[1].classList.add("transparent");
+    event.target.classList.toggle("collapsed");
+    liEl.children[1].classList.toggle("transparent");
+  }
 };
 
-const clickText = event => {
-  base.forEach(item_one => {
-    if (item_one.name == event.target.childNodes[0].textContent) {
-      select(
-        employeers.filter(item_two => item_one.id == item_two.dept_unit_id)
-      );
-    }
-  });
+const clickText = (event) => {
+  if (event.target.tagName === "SPAN") {
+    let deptId = event.target.getAttribute("data-dept-id");
+    fetch(deptId + "_department.json")
+      .then((response) => response.json())
+      .then((data) => {
+        select(data);
+      });
+  }
 };
 
 htmlTreeParent.addEventListener("click", clickHandler);
@@ -197,27 +121,107 @@ table.appendChild(thead);
 table.appendChild(tbody);
 thead.appendChild(trHead);
 
-["id", "name", "dept_unit_id", "tel", "salary"].map(el => {
+["id", "name", "dept_unit_id", "tel", "salary"].map((el) => {
   let thHead = document.createElement("th");
   trHead.appendChild(thHead);
   thHead.innerText = el;
 });
 
-function select(employeers) {
+function rows (){
   const rows = Array.from(
     document.getElementsByTagName("tbody")[0].getElementsByTagName("tr")
   );
   if (rows.length) {
-    rows.forEach(row => tbody.removeChild(row));
+    rows.forEach((row) => tbody.removeChild(row));
   }
+}
 
-  employeers.forEach(employeer => {
+let salary = [];
+function select(employeers) {
+  rows()
+  salary.length = 0
+  
+  employeers.forEach((employeer) => {
     let trBody = document.createElement("tr");
     tbody.appendChild(trBody);
+    
     for (let key in employeer) {
       let tdBody = document.createElement("td");
       trBody.appendChild(tdBody);
       tdBody.innerText = employeer[key];
+
+      if (key === "salary") {
+        tdBody.classList.add("salary");
+        salary.push(employeer[key]);
+      }
     }
   });
+  changeCurrency(salary);
 }
+
+let arr = [145, 292];
+let currency = document.getElementsByClassName("currency")[0];
+
+arr.forEach(function (id) {
+  let option = document.createElement("option");
+  fetch(`http://www.nbrb.by/API/exrates/currencies/${id}`)
+    .then((response) => response.json())
+    .then((date) => {
+      currency.appendChild(option);
+      option.innerText = date.Cur_Abbreviation;
+      option.setAttribute("data-curr-id", id);
+    });
+});
+
+function changeCurrency(value) {
+  const selectedOption = Array.from(currency.options).find(
+    (option) => option.innerText === currency.value
+  );
+  if (
+    selectedOption.innerText !== "BYN" &&
+    selectedOption.innerText !== "Choose salary currency"
+  ) {
+    fetch(
+      `http://www.nbrb.by/API/ExRates/Rates/${selectedOption.getAttribute(
+        "data-curr-id"
+      )}`
+    )
+      .then((response) => response.json())
+      .then((item) => {
+        let rate = item.Cur_OfficialRate;
+        getSum(rate, value);
+      });
+  } else {
+    if (value) {
+      getSumByn(value);
+    }
+  }
+}
+
+currency.onchange = function () {
+  changeCurrency(salary);
+};
+
+let trCur = document.getElementsByClassName("salary");
+
+function getSum(rate, value) {
+  for (let i = 0; i < value.length; i++) {
+    let newSalary = (value[i] / rate).toFixed(0);
+    trCur[i].innerText = newSalary;
+  }
+}
+
+function getSumByn(value) {
+  for (let i = 0; i < value.length; i++) {
+    let newSalary = value[i];
+    trCur[i].innerText = newSalary;
+  }
+}
+
+document.getElementsByTagName('button')[0].onclick = function (){
+  if(tbody.children.length!==0){
+    rows()
+    selectedItem.classList.remove("choose")
+  }
+}
+

@@ -33,6 +33,24 @@ li {
   display: none;
 }
 
-.close {
-  display: none;
+.choose {
+  font-weight: bold;
+}
+
+.fa-chevron-down,
+.fa-chevron-right {
+  font-size: 12px;
+}
+
+.high {
+  display: flex;
+  justify-content: space-around;
+}
+
+button {
+  background-color: beige;
+  border: none;
+  padding: 5px 20px;
+  text-align: center;
+  font-size: 13px;
 }

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 7,
+    "name": "KoliaLead",
+    "dept_unit_id": 4,
+    "tel": "123-123-3",
+    "salary": 2500
+  },
+  {
+    "id": 6,
+    "name": "OliaLead3",
+    "dept_unit_id": 4,
+    "tel": "123-123-3",
+    "salary": 3000
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "MashaLead",
+    "dept_unit_id": 1,
+    "tel": "123-123-3",
+    "salary": 1900
+  },
+  {
+    "id": 2,
+    "name": "SashaLead",
+    "dept_unit_id": 1,
+    "tel": "123-123-3",
+    "salary": 2200
+  }
+]

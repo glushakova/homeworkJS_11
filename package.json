@@ -1,0 +1,23 @@
+{
+  "name": "11.0.0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glushakova/homeworkJS_11.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/glushakova/homeworkJS_11/issues"
+  },
+  "homepage": "https://github.com/glushakova/homeworkJS_11#readme",
+  "dependencies": {
+    "node-static": "^0.7.11"
+  }
+}
